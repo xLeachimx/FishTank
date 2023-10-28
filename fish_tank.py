@@ -25,13 +25,16 @@ class FishTank:
         self.food = pos
         for fish in self.fishes:
             fish.goal = self.food
+            
+    def pick_food(self):
+        self.food_active = False
 
     def update(self, delta: float):
-        if self.food_active:
-            for fish in self.fishes:
-                if np.linalg.norm(fish.pos - self.food) < 10:
-                    self.food_active = False
-                    break
+        # if self.food_active:
+        #     for fish in self.fishes:
+        #         if np.linalg.norm(fish.pos - self.food) < 10:
+        #             self.food_active = False
+        #             break
         if not self.food_active and self.food is not None:
             self.food = None
             for fish in self.fishes:
