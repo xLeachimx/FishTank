@@ -21,7 +21,7 @@ def main():
     screen_dim = screen_dim[0]*scale, screen_dim[1]*scale
     tank = FishTank(15, screen_dim)
     screen = pg.display.set_mode(screen_dim, flags=pg.FULLSCREEN | pg.SCALED)
-    pg.display.set_caption("Ameboa Tank")
+    pg.display.set_caption("Amoeba Tank")
     pg.display.set_icon(pg.image.load("fish_sprite.png"))
     running = True
     frame_delta = 1/30
