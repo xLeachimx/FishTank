@@ -16,15 +16,20 @@ from utilities import ang_to_vec
 
 class Fish(Mobile):
     __NORM_FAC = 1
+    __FISH_SPRITE = pg.image.load("fish_sprite.png")
     def __init__(self, pos: np.ndarray, screen_dim: (int, int)):
-        super(Fish, self).__init__(pos, 50, pg.image.load("fish_sprite.png"), screen_dim)
+        super(Fish, self).__init__(pos, 50, Fish.__FISH_SPRITE, screen_dim)
         self.goal = self.__random_goal()
-        self.spd_base = 4
+        self.spd_base = 50
         self.spd_max = 100
-        self.spd_min = 10
+        self.spd_min = 50
     
     def __random_goal(self):
-        return np.array([randrange(0, self.dim[0]), randrange(0, self.dim[1])], dtype=float)
+        x_min = self.dim[0]//10
+        x_max = x_min * 9
+        y_min = self.dim[1]//10
+        y_max = y_min * 9
+        return np.array([randrange(x_min, x_max), randrange(y_min, y_max)], dtype=float)
     
     def random_walk(self):
         self.goal = self.__random_goal()
@@ -40,7 +45,7 @@ class Fish(Mobile):
     def process(self, fishes: list['Fish']):
         g_norm = self.__pos_norm(self.goal)
         p_norm = self.__pos_norm(self.pos)
-        repulse_factor = 1
+        repulse_factor = 0.5
         attraction_factor = 2 * len(fishes)
         # overall_vec = attraction_factor * ((self.goal - self.pos)/np.linalg.norm(self.goal - self.pos))
         g_dist = np.linalg.norm(g_norm - p_norm)
