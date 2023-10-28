@@ -9,4 +9,4 @@ import numpy as np
 from math import sin, cos
 
 def ang_to_vec(angle: float):
-    return np.array([cos(angle), sin(angle)])
+    return np.array([sin(angle), cos(angle)])
