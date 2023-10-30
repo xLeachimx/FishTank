@@ -18,8 +18,9 @@ class Fish(Mobile):
     __FISH_SPRITE = pg.image.load("fish_sprite.png")
     __SPD_MAX = 100.0
     __DEFAULT_DIST = 10**-5
-    __ATTR_CONST = 200
-    __REP_CONST = 400
+    __ATTR_CONST = 1
+    __REP_CONST = 50
+    __DEFAULT_FORCING = 10
 
     def __init__(self, pos: np.ndarray, screen_dim: (int, int)):
         super(Fish, self).__init__(pos, np.array([0.0, 0.0]), Fish.__FISH_SPRITE, screen_dim)
@@ -59,7 +60,9 @@ class Fish(Mobile):
         attr_dist[attr_dist == 0] = Fish.__DEFAULT_DIST
         attr = np.sum(attr_diff/np.transpose(np.array([attr_dist])), axis=0)
         # Combine
-        overall_vec = (Fish.__ATTR_CONST * attr) + (Fish.__REP_CONST * rep)
+        balance = aspect_ratio((len(repulsors), len(attractors)))
+        overall_vec = (balance[0] * Fish.__ATTR_CONST * attr) + (balance[1] * Fish.__REP_CONST * rep)
+        overall_vec = Fish.__DEFAULT_FORCING * overall_vec
         speed = min(max(-Fish.__SPD_MAX, np.linalg.norm(overall_vec)), Fish.__SPD_MAX)
         self.velocity = speed * unit_vec(overall_vec)
 
