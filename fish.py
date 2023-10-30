@@ -4,25 +4,27 @@
 # Lisence: GNU GPLv3
 # Purpose:
 #   A simple fish object
-#  TODO: Normal position during repulsor calculation for more consistent factors
 
 from mob import Mobile
 from random import randrange
 import numpy as np
 import pygame as pg
 from math import radians
-from utilities import ang_to_vec
+from utilities import ang_to_vec, unit_vec, aspect_ratio
 
 
 class Fish(Mobile):
-    __NORM_FAC = 1
+    __NORM_FAC = 10
     __FISH_SPRITE = pg.image.load("fish_sprite.png")
+    __SPD_MAX = 100.0
+    __DEFAULT_DIST = 10**-5
+    __ATTR_CONST = 200
+    __REP_CONST = 400
+
     def __init__(self, pos: np.ndarray, screen_dim: (int, int)):
-        super(Fish, self).__init__(pos, 50, Fish.__FISH_SPRITE, screen_dim)
+        super(Fish, self).__init__(pos, np.array([0.0, 0.0]), Fish.__FISH_SPRITE, screen_dim)
         self.goal = self.__random_goal()
-        self.spd_base = 50
-        self.spd_max = 100
-        self.spd_min = 50
+        self.norm_dim = Fish.__NORM_FAC * np.array(aspect_ratio(screen_dim), dtype=float)
     
     def __random_goal(self):
         x_min = self.dim[0]//10
@@ -41,31 +43,28 @@ class Fish(Mobile):
             
     def draw(self, surface: pg.Surface):
         super(Fish, self).draw(surface)
-    
-    def process(self, fishes: list['Fish']):
-        g_norm = self.__pos_norm(self.goal)
-        p_norm = self.__pos_norm(self.pos)
-        repulse_factor = 0.5
-        attraction_factor = 2 * len(fishes)
-        # overall_vec = attraction_factor * ((self.goal - self.pos)/np.linalg.norm(self.goal - self.pos))
-        g_dist = np.linalg.norm(g_norm - p_norm)
-        overall_vec = attraction_factor * ((g_norm - p_norm)/g_dist)
-        for fish in fishes:
-            if self == fish:
-                continue
-            vec_between = p_norm - self.__pos_norm(fish.pos)
-            dist = np.linalg.norm(vec_between)
-            if dist == 0:
-                dist += 10 ** -5
-            unit = vec_between / dist
-            repulse = (repulse_factor/dist) * unit
-            overall_vec += repulse
-        # overall_vec = overall_vec/np.linalg.norm(overall_vec)
-        self.set_facing(np.arctan2(*overall_vec))
-        self.speed = max(self.spd_min, min(self.spd_max, self.spd_base * np.linalg.norm(overall_vec)))
+        
+    def process_quick(self, repulsors: np.ndarray, attractors: np.ndarray):
+        repulsors = np.apply_along_axis(self.__norm_position, 1, repulsors)
+        attractors = np.apply_along_axis(self.__norm_position, 1, attractors)
+        pos = self.__norm_position(self.pos)
+        # Compute repulsing forces
+        rep_diff = repulsors - pos
+        rep_dist = np.power(np.linalg.norm(rep_diff, axis=1), 2)
+        rep_dist[rep_dist == 0] = Fish.__DEFAULT_DIST
+        rep = np.sum(rep_diff/np.transpose(np.array([rep_dist])), axis=0) * -1
+        # Compute attracting forces
+        attr_diff = attractors - pos
+        attr_dist = np.power(np.linalg.norm(attr_diff, axis=1), 1)
+        attr_dist[attr_dist == 0] = Fish.__DEFAULT_DIST
+        attr = np.sum(attr_diff/np.transpose(np.array([attr_dist])), axis=0)
+        # Combine
+        overall_vec = (Fish.__ATTR_CONST * attr) + (Fish.__REP_CONST * rep)
+        speed = min(max(-Fish.__SPD_MAX, np.linalg.norm(overall_vec)), Fish.__SPD_MAX)
+        self.velocity = speed * unit_vec(overall_vec)
 
-    def __pos_norm(self, vec):
+    def __norm_position(self, vec):
         n = vec.copy()
-        n[0] = Fish.__NORM_FAC * (n[0]/self.dim[0])
-        n[1] = Fish.__NORM_FAC * (n[1]/self.dim[1])
+        n[0] = self.norm_dim[0] * (n[0]/self.dim[0])
+        n[1] = self.norm_dim[1] * (n[1]/self.dim[1])
         return n

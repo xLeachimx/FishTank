@@ -14,3 +14,6 @@ def ang_to_vec(angle: float):
 def aspect_ratio(dim: (int, int)):
     div = gcd(*dim)
     return dim[0]/div, dim[1]/div
+
+def unit_vec(vec: np.ndarray):
+    return vec/np.linalg.norm(vec)

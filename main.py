@@ -11,15 +11,16 @@ from fish_tank import FishTank
 from time import perf_counter
 from utilities import aspect_ratio
 
+
 def main():
     pg.display.init()
     scale = 50
     pg.mouse.set_visible(True)
-    pg.mouse.set_cursor(*pg.cursors.diamond)
+    pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
     screen_dim = pg.display.Info()
     screen_dim = aspect_ratio((screen_dim.current_w, screen_dim.current_h))
-    screen_dim = screen_dim[0]*scale, screen_dim[1]*scale
-    tank = FishTank(15, screen_dim)
+    screen_dim = int(screen_dim[0]*scale), int(screen_dim[1]*scale)
+    tank = FishTank(20, screen_dim)
     screen = pg.display.set_mode(screen_dim, flags=pg.FULLSCREEN | pg.SCALED)
     pg.display.set_caption("Amoeba Tank")
     pg.display.set_icon(pg.image.load("fish_sprite.png"))

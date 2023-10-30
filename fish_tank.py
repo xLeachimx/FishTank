@@ -42,8 +42,11 @@ class FishTank:
             self.food = None
             for fish in self.fishes:
                 fish.random_walk()
+        repulse = np.array(list(map(lambda f: f.pos, self.fishes)))
         for fish in self.fishes:
-            fish.process(self.fishes)
+            fish.process_quick(repulse, np.array([fish.goal]))
+        # for fish in self.fishes:
+        #     fish.process(self.fishes)
         for fish in self.fishes:
             fish.update(delta)
     
