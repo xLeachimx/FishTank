@@ -14,11 +14,12 @@ import pygame as pg
 
 class FishTank:
     __FOOD_LIMIT = 10
+    __WATER_COLOR = (0, 35, 163)
     def __init__(self, fish_count: int, dim: (int, int)):
         self.dim = dim
         self.fishes = [Fish(self.__rand_point(), self.dim) for i in range(fish_count)]
         self.surf = pg.Surface(self.dim)
-        self.bg_color = (10, 150, 255)
+        self.bg_color = FishTank.__WATER_COLOR
         self.food_pellets = []
         
     def drop_food(self, pos: np.ndarray):
@@ -49,8 +50,6 @@ class FishTank:
             if not eaten:
                 res_pellets.append(food)
         self.food_pellets = res_pellets
-
-
     
     def draw(self, screen: pg.Surface):
         self.surf.fill(self.bg_color)
@@ -61,8 +60,8 @@ class FishTank:
         screen.blit(self.surf, (0, 0))
         
     def __rand_point(self):
-        x_min = self.dim[0]//4
-        x_max = x_min * 3
-        y_min = self.dim[1]//4
-        y_max = y_min * 3
+        x_min = self.dim[0]//7
+        x_max = x_min * 6
+        y_min = self.dim[1]//7
+        y_max = y_min * 6
         return np.array([randrange(x_min, x_max), randrange(y_min, y_max)], dtype=float)

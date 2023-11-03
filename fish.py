@@ -15,13 +15,13 @@ from utilities import ang_to_vec, unit_vec, aspect_ratio
 
 
 class Fish(Mobile):
-    __NORM_FAC = 10
+    __NORM_FAC = 7
     __SPRITE_SWIM = pg.image.load("fish_sprite_swim.png")
     __SPRITE_HUNGRY = pg.image.load("fish_sprite_hungry.png")
     __SPD_MAX = 100.0
     __DEFAULT_DIST = 10**-5
     __ATTR_CONST = 1
-    __REP_CONST = 20
+    __REP_CONST = 30
     __DEFAULT_FORCING = 10
     __HUNGER_TIMER = 20
 
@@ -33,10 +33,10 @@ class Fish(Mobile):
         self.hunger = randrange(5, Fish.__HUNGER_TIMER)
     
     def __random_goal(self):
-        x_min = self.dim[0]//10
-        x_max = x_min * 9
-        y_min = self.dim[1]//10
-        y_max = y_min * 9
+        x_min = self.dim[0]//7
+        x_max = x_min * 6
+        y_min = self.dim[1]//7
+        y_max = y_min * 6
         return np.array([randrange(x_min, x_max), randrange(y_min, y_max)], dtype=float)
     
     def update(self, delta: float):
@@ -45,7 +45,7 @@ class Fish(Mobile):
         if self.hunger <= 0:
             self.state = "HUNGRY"
             self.sprite = Fish.__SPRITE_HUNGRY
-        if np.linalg.norm(self.pos - self.goal) <= 5:
+        if np.linalg.norm(self.pos - self.goal) <= 10:
             self.goal = self.__random_goal()
 
     def feed(self):
