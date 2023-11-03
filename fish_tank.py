@@ -26,7 +26,8 @@ class FishTank:
         self.food_pellets.append(Food(pos))
 
     def sprinkle_food(self):
-        for _ in range(FishTank.__FOOD_LIMIT):
+        num_to_add = min(FishTank.__FOOD_LIMIT, len(self.fishes) - len(self.food_pellets))
+        for _ in range(num_to_add):
             self.drop_food(self.__rand_point())
 
     def update(self, delta: float):
