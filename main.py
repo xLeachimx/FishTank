@@ -14,6 +14,9 @@ from utilities import aspect_ratio
 
 def main():
     pg.display.init()
+    close_btn = pg.Surface((30,30), flags=pg.SRCALPHA)
+    pg.draw.line(close_btn, "red", (0, 0), (29, 29), 5)
+    pg.draw.line(close_btn, "red", (29, 0), (0, 29), 5)
     short_min = 500
     pg.mouse.set_visible(True)
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
@@ -21,9 +24,9 @@ def main():
     screen_dim = aspect_ratio((screen_dim.current_w, screen_dim.current_h))
     scale = (short_min//min(screen_dim))+1
     screen_dim = int(screen_dim[0]*scale), int(screen_dim[1]*scale)
-    tank = FishTank(30, screen_dim)
+    tank = FishTank(20, screen_dim)
     screen = pg.display.set_mode(screen_dim, flags=pg.FULLSCREEN | pg.SCALED)
-    pg.display.set_caption("Amoeba Tank")
+    pg.display.set_caption("Fish Tank")
     pg.display.set_icon(pg.image.load("fish_sprite.png"))
     running = True
     frame_delta = 1/30
@@ -33,13 +36,17 @@ def main():
             frame_timer = perf_counter()
             tank.update(frame_delta)
             tank.draw(screen)
+            screen.blit(close_btn, (0, 0))
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
                 elif event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == pg.BUTTON_LEFT:
-                        tank.sprinkle_food()
+                        if close_btn.get_rect().collidepoint(event.pos):
+                            running = False
+                        else:
+                            tank.sprinkle_food()
                 elif event.type == pg.KEYDOWN:
                     if event.key in [pg.K_q, pg.K_ESCAPE]:
                         running = False
