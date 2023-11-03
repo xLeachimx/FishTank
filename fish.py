@@ -16,7 +16,7 @@ from utilities import ang_to_vec, unit_vec, aspect_ratio
 
 class Fish(Mobile):
     __NORM_FAC = 10
-    __FISH_SPRITE = pg.image.load("fish_sprite.png")
+    __FISH_SPRITE = pg.image.load("fish_sprite_swim.png")
     __SPD_MAX = 100.0
     __DEFAULT_DIST = 10**-5
     __ATTR_CONST = 1
