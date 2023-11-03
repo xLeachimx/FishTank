@@ -14,13 +14,14 @@ from utilities import aspect_ratio
 
 def main():
     pg.display.init()
-    scale = 50
+    short_min = 500
     pg.mouse.set_visible(True)
     pg.mouse.set_cursor(pg.SYSTEM_CURSOR_CROSSHAIR)
     screen_dim = pg.display.Info()
     screen_dim = aspect_ratio((screen_dim.current_w, screen_dim.current_h))
+    scale = (short_min//min(screen_dim))+1
     screen_dim = int(screen_dim[0]*scale), int(screen_dim[1]*scale)
-    tank = FishTank(20, screen_dim)
+    tank = FishTank(30, screen_dim)
     screen = pg.display.set_mode(screen_dim, flags=pg.FULLSCREEN | pg.SCALED)
     pg.display.set_caption("Amoeba Tank")
     pg.display.set_icon(pg.image.load("fish_sprite.png"))
@@ -38,11 +39,12 @@ def main():
                     running = False
                 elif event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == pg.BUTTON_LEFT:
-                        tank.drop_food(np.array(event.pos, dtype=float))
-                    elif event.button == pg.BUTTON_RIGHT:
-                        tank.pick_food()
-                elif event.type == pg.MOUSEMOTION and 1 in event.buttons:
-                    tank.drop_food(np.array(event.pos, dtype=float))
+                        tank.sprinkle_food()
+                elif event.type == pg.KEYDOWN:
+                    if event.key in [pg.K_q, pg.K_ESCAPE]:
+                        running = False
+                    elif event.key == pg.K_f:
+                        tank.sprinkle_food()
                 elif event.type == pg.KEYDOWN and event.key in [pg.K_q, pg.K_ESCAPE]:
                     running = False
                     
