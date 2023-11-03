@@ -40,10 +40,12 @@ def main():
                 elif event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == pg.BUTTON_LEFT:
                         tank.drop_food(np.array(event.pos, dtype=float))
-                    elif event.button == pg.BUTTON_RIGHT:
-                        tank.pick_food()
-                elif event.type == pg.MOUSEMOTION and 1 in event.buttons:
-                    tank.drop_food(np.array(event.pos, dtype=float))
+                elif event.type == pg.KEYDOWN:
+                    if event.key in [pg.K_q, pg.K_ESCAPE]:
+                        running = False
+                    elif event.key == pg.K_f:
+                        tank.sprinkle_food()
+
                 elif event.type == pg.KEYDOWN and event.key in [pg.K_q, pg.K_ESCAPE]:
                     running = False
                     

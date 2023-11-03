@@ -10,8 +10,17 @@ import pygame as pg
 
 class Food:
     __FOOD_COLOR = (50, 230, 50)
+    __FOOD_LIMIT = 5
     def __init__(self, pos: np.ndarray):
         self.pos = pos
+        self.valid = True
+        self.spoil = Food.__FOOD_LIMIT
     
     def draw(self, surf: pg.Surface):
-        pass
+        pg.draw.circle(surf, Food.__FOOD_COLOR, self.pos, 5)
+
+    def eat(self):
+        self.valid = False
+
+    def update(self, delta):
+        self.spoil -= delta
