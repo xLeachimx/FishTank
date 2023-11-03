@@ -16,7 +16,8 @@ from utilities import ang_to_vec, unit_vec, aspect_ratio
 
 class Fish(Mobile):
     __NORM_FAC = 10
-    __FISH_SPRITE = pg.image.load("fish_sprite_swim.png")
+    __SPRITE_SWIM = pg.image.load("fish_sprite_swim.png")
+    __SPRITE_HUNGRY = pg.image.load("fish_sprite_hungry.png")
     __SPD_MAX = 100.0
     __DEFAULT_DIST = 10**-5
     __ATTR_CONST = 1
@@ -25,7 +26,7 @@ class Fish(Mobile):
     __HUNGER_TIMER = 20
 
     def __init__(self, pos: np.ndarray, screen_dim: (int, int)):
-        super(Fish, self).__init__(pos, np.array([0.0, 0.0]), Fish.__FISH_SPRITE, screen_dim)
+        super(Fish, self).__init__(pos, np.array([0.0, 0.0]), Fish.__SPRITE_SWIM, screen_dim)
         self.goal = self.__random_goal()
         self.norm_dim = Fish.__NORM_FAC * np.array(aspect_ratio(screen_dim), dtype=float)
         self.state = "SWIM"
@@ -43,12 +44,15 @@ class Fish(Mobile):
         self.hunger -= delta
         if self.hunger <= 0:
             self.state = "HUNGRY"
+            self.sprite = Fish.__SPRITE_HUNGRY
         if np.linalg.norm(self.pos - self.goal) <= 5:
             self.goal = self.__random_goal()
 
     def feed(self):
         self.state = "SWIM"
+        self.sprite = Fish.__SPRITE_SWIM
         self.hunger = randrange(5, Fish.__HUNGER_TIMER)
+
     def draw(self, surface: pg.Surface):
         super(Fish, self).draw(surface)
         
